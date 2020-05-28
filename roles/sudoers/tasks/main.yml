@@ -11,4 +11,4 @@
     mode: 0400
     force: yes
     validate: /usr/sbin/visudo -csf /etc/sudoers
-  when: sudoers | default(false)
+  when: inventory_hostname in groups['hypervisors']
