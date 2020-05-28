@@ -1,0 +1,34 @@
+---
+- include: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Install zabbix-agent
+  package: name=zabbix-agent state=present
+
+- name: Copy zabbix-agent basic configuration.
+  template:
+    src: zabbix-agent.j2
+    dest: "/etc/zabbix/zabbix_agentd.conf"
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+  notify: restart zabbix-agent
+
+- name: Copy zabbix-agent hypervisor configuration.
+  copy:
+    src: zabbix-agent-hv.conf
+    dest: "/etc/zabbix/zabbix_agentd.conf.d/zabbix-agent-hv.conf"
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+    backup: yes
+  notify: restart zabbix-agent
+  when: inventory_hostname in groups['hypervisors']
+
+- name: Ensure Zabbix-agent is started and enabled at boot.
+  service:
+    name: zabbix-agent
+    state: started
+    enabled: true

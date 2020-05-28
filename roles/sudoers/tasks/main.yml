@@ -1,0 +1,14 @@
+---
+- name: Install Sudoers
+  package: name=sudo state=present
+
+- name: Copy Sudoers configuration.
+  template:
+    src: sudoers.j2
+    dest: "/etc/sudoers"
+    owner: root
+    group: root
+    mode: 0400
+    force: yes
+    validate: /usr/sbin/visudo -csf /etc/sudoers
+  when: sudoers | default(false)

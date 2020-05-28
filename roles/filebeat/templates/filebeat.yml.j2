@@ -1,0 +1,14 @@
+filebeat.prospectors:
+- input_type: log
+  # Paths that should be crawled and fetched. Glob based paths.
+  paths:
+    - /var/log/*.log
+    #- c:\programdata\elasticsearch\logs\*
+
+name: "{{ ansible_fqdn }}"
+fields:
+  company: "{{ ansible_domain }}"
+#  env: staging
+fields_under_root: true
+output.logstash:
+  hosts: ["{{ ServerIp }}:5044"]
