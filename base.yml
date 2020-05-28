@@ -2,8 +2,8 @@
 - hosts: all
   vars:
     ansible_connection: ssh
-    ansible_user: User-name
-    ansible_ssh_pass: Password
+    ansible_user: 
+    ansible_ssh_pass: 
   roles:
    - zabbix-agent
    - filebeat

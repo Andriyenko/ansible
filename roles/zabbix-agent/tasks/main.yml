@@ -2,8 +2,8 @@
 - include: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
-- name: Install zabbix-agent
-  package: name=zabbix-agent state=present
+- include: setup-redhat.yml
+  when: ansible_os_family == 'RedHat'
 
 - name: Copy zabbix-agent basic configuration.
   template:
@@ -26,6 +26,30 @@
     backup: yes
   notify: restart zabbix-agent
   when: inventory_hostname in groups['hypervisors']
+
+- name: Copy zabbix-agent db configuration.
+  copy:
+    src: zabbix-agent-db-psql.conf
+    dest: "/etc/zabbix/zabbix_agentd.conf.d/postgresql.conf"
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+    backup: yes
+  notify: restart zabbix-agent
+  when: inventory_hostname in groups['db']
+
+- name: Copy zabbix-agent proxy configuration.
+  copy:
+    src: zabbix-agent-db-mysql.conf
+    dest: "/etc/zabbix/zabbix_agentd.d/mysql.conf"
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+    backup: yes
+  notify: restart zabbix-agent
+  when: inventory_hostname in groups['proxy']
 
 - name: Ensure Zabbix-agent is started and enabled at boot.
   service:
