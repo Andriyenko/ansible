@@ -27,6 +27,14 @@
   notify: restart zabbix-agent
   when: inventory_hostname in groups['hypervisors']
 
+- name: copy pg sql scripts
+  copy:
+    src: "{{ item }}"
+    dest: /var/lib/zabbix/postgresql/
+  with_fileglob:
+    - files/pg/*
+  when: inventory_hostname in groups['db']
+
 - name: Copy zabbix-agent db configuration.
   copy:
     src: zabbix-agent-db-psql.conf
